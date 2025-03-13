@@ -39,28 +39,6 @@ const CardTitle = styled.h3`
   color: ${({ theme }) => theme.textColor};
 `;
 
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: ${({ theme }) => theme.primaryColor};
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  &:hover {
-    background-color: ${({ theme }) => darken(theme.primaryColor, 10)};
-  }
-`;
-
-const darken = (color: string, percent: number) => {
-  const num = parseInt(color.replace('#', ''), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = Math.max(0, (num >> 16) - amt);
-  const G = Math.max(0, ((num >> 8) & 0x00ff) - amt);
-  const B = Math.max(0, (num & 0x0000ff) - amt);
-  return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
-};
-
 const templatesData = [
   { id: 1, title: 'Default Style', themeKey: 'default' },
   { id: 2, title: 'Dark Mode', themeKey: 'dark' },
