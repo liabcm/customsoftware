@@ -69,6 +69,32 @@ const Message = styled.p<{ success?: boolean }>`
   margin-top: 1rem;
 `;
 
+// Helper functions
+const formatPhoneNumber = (value: string): string => {
+  const numbers = value.replace(/\D/g, '');
+  let formatted = '';
+  if (numbers.length > 0) {
+    formatted = `(${numbers.substring(0, 3)}`;
+  }
+  if (numbers.length > 3) {
+    formatted += `) ${numbers.substring(3, 6)}`;
+  }
+  if (numbers.length > 6) {
+    formatted += `-${numbers.substring(6, 10)}`;
+  }
+  return formatted;
+};
+
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const isValidPhone = (phone: string): boolean => {
+  const numbers = phone.replace(/\D/g, '');
+  return numbers.length === 10;
+};
+
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -85,17 +111,35 @@ const ContactForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    const { name, value } = e.target;
+    let processedValue = value;
+
+    if (name === 'phone') {
+      processedValue = formatPhoneNumber(value);
+    }
+
+    setFormData({ ...formData, [name]: processedValue });
+    setErrors({ ...errors, [name]: '' });
     setFormStatus('idle');
   };
 
   const validate = () => {
     const newErrors: any = {};
     if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.email && !formData.phone)
-      newErrors.contact = 'Email or phone is required';
     if (!formData.message) newErrors.message = 'Message is required';
+
+    // Validate contact information
+    if (!formData.email && !formData.phone) {
+      newErrors.contact = 'Email or phone is required';
+    } else {
+      if (formData.email && !isValidEmail(formData.email)) {
+        newErrors.email = 'Invalid email format';
+      }
+      if (formData.phone && !isValidPhone(formData.phone)) {
+        newErrors.phone = 'Phone number must be 10 digits';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -107,10 +151,10 @@ const ContactForm = () => {
     setSending(true);
     emailjs
       .send(
-        'service_ssohbix',
-        'template_x1zwvh3',
+        import.meta.env.VITE_EMAIL_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
         formData,
-        'mqm8w6J08g3d8eRy1'
+        import.meta.env.VITE_USER_ID
       )
       .then(() => {
         setFormStatus('success');
@@ -132,6 +176,7 @@ const ContactForm = () => {
           onChange={handleChange}
         />
         {errors.name && <Message>{errors.name}</Message>}
+
         <Input
           type='email'
           name='email'
@@ -139,6 +184,8 @@ const ContactForm = () => {
           value={formData.email}
           onChange={handleChange}
         />
+        {errors.email && <Message>{errors.email}</Message>}
+
         <Input
           type='tel'
           name='phone'
@@ -146,7 +193,9 @@ const ContactForm = () => {
           value={formData.phone}
           onChange={handleChange}
         />
+        {errors.phone && <Message>{errors.phone}</Message>}
         {errors.contact && <Message>{errors.contact}</Message>}
+
         <Textarea
           name='message'
           placeholder='Your Message'
@@ -154,9 +203,11 @@ const ContactForm = () => {
           onChange={handleChange}
         />
         {errors.message && <Message>{errors.message}</Message>}
+
         <Button type='submit' disabled={sending}>
           {sending ? 'Sending...' : 'Send Message'}
         </Button>
+
         {formStatus === 'success' && (
           <Message success>Thank you! We’ll get back to you soon.</Message>
         )}
