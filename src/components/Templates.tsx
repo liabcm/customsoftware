@@ -1,42 +1,32 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 const TemplatesStyled = styled.section`
-  padding: 2rem;
+  padding: 1rem 0;
   background-color: ${({ theme }) => theme.backgroundColor};
   text-align: center;
   width: 100%;
 `;
 
-const Heading = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: ${({ theme }) => theme.textColor};
+const TabsContainer = styled.div`
+  display: inline-flex;
 `;
 
-const Grid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-`;
-
-const Card = styled.div`
-  background-color: ${({ theme }) => theme.cardBackground};
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+const Tab = styled.button<{ active?: boolean }>`
+  background: ${({ active, theme }) =>
+    active ? theme.primaryColor : 'transparent'};
+  border: none;
+  color: ${({ active, theme }) => (active ? '#fff' : theme.textColor)};
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
   cursor: pointer;
-  width: 200px;
+  border-radius: 4px;
+  transition: background 0.3s ease, color 0.3s ease;
   &:hover {
-    transform: scale(1.05);
+    background: ${({ active, theme }) =>
+      active ? theme.primaryColor : theme.secondaryColor};
+    color: #fff;
   }
-`;
-
-const CardTitle = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: ${({ theme }) => theme.textColor};
 `;
 
 const templatesData = [
@@ -51,19 +41,26 @@ interface TemplatesProps {
 }
 
 const Templates = ({ setTheme, themes }: TemplatesProps) => {
+  const [activeTab, setActiveTab] = useState('default');
+
+  const handleTabClick = (themeKey: string) => {
+    setActiveTab(themeKey);
+    setTheme(themes[themeKey]);
+  };
+
   return (
     <TemplatesStyled id='templates'>
-      <Heading>Choose a Style</Heading>
-      <Grid>
+      <TabsContainer>
         {templatesData.map((template) => (
-          <Card
+          <Tab
             key={template.id}
-            onClick={() => setTheme(themes[template.themeKey])}
+            active={activeTab === template.themeKey}
+            onClick={() => handleTabClick(template.themeKey)}
           >
-            <CardTitle>{template.title}</CardTitle>
-          </Card>
+            {template.title}
+          </Tab>
         ))}
-      </Grid>
+      </TabsContainer>
     </TemplatesStyled>
   );
 };

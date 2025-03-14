@@ -4,72 +4,81 @@ import styled from 'styled-components';
 
 const FormSection = styled.section`
   padding: 4rem 2rem;
-  background-color: ${({ theme }) => theme.cardBackground};
+  background: linear-gradient(
+    135deg,
+    #fff,
+    ${({ theme }) => theme.backgroundColor}
+  );
   text-align: center;
   width: 100%;
 `;
 
 const Heading = styled.h2`
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 2rem;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.primaryColor};
+  font-weight: bold;
 `;
 
 const FormStyled = styled.form`
-  margin: 0 1rem;
+  margin: 0 auto;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 `;
 
 const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid ${({ theme }) => theme.textColor};
-  border-radius: 4px;
+  padding: 1rem;
+  border: 2px solid ${({ theme }) => theme.textColor};
+  border-radius: 8px;
   font-size: 1rem;
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: #fff;
   color: ${({ theme }) => theme.textColor};
-  min-width: 50%;
-  margin: 0 auto;
-  display: block;
+  transition: border-color 0.3s ease;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primaryColor};
+  }
 `;
 
 const Textarea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid ${({ theme }) => theme.textColor};
-  border-radius: 4px;
+  padding: 1rem;
+  border: 2px solid ${({ theme }) => theme.textColor};
+  border-radius: 8px;
   font-size: 1rem;
-  min-height: 100px;
-  background-color: ${({ theme }) => theme.backgroundColor};
+  min-height: 150px;
+  background-color: #fff;
   color: ${({ theme }) => theme.textColor};
-  min-width: 50%;
-  margin: 0 auto;
-  display: block;
+  transition: border-color 0.3s ease;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primaryColor};
+  }
 `;
 
 const Button = styled.button<{ disabled?: boolean }>`
-  padding: 0.75rem;
+  padding: 1rem;
   background-color: ${({ disabled, theme }) =>
-    disabled ? '#95a5a6' : theme.primaryColor};
-  color: white;
+    disabled ? '#bdc3c7' : theme.primaryColor};
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1.1rem;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  transition: background-color 0.3s ease, transform 0.3s ease;
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.primaryColor};
-    filter: brightness(90%);
+    transform: translateY(-2px);
   }
-  min-width: 50%;
-  margin: 0 auto;
-  display: block;
 `;
 
 const Message = styled.p<{ success?: boolean }>`
   color: ${({ success }) => (success ? 'green' : 'red')};
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
 `;
 
-// Helper functions
 const formatPhoneNumber = (value: string): string => {
   const numbers = value.replace(/\D/g, '');
   let formatted = '';
@@ -113,11 +122,9 @@ const ContactForm = () => {
   ) => {
     const { name, value } = e.target;
     let processedValue = value;
-
     if (name === 'phone') {
       processedValue = formatPhoneNumber(value);
     }
-
     setFormData({ ...formData, [name]: processedValue });
     setErrors({ ...errors, [name]: '' });
     setFormStatus('idle');
@@ -127,8 +134,6 @@ const ContactForm = () => {
     const newErrors: any = {};
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.message) newErrors.message = 'Message is required';
-
-    // Validate contact information
     if (!formData.email && !formData.phone) {
       newErrors.contact = 'Email or phone is required';
     } else {
@@ -139,7 +144,6 @@ const ContactForm = () => {
         newErrors.phone = 'Phone number must be 10 digits';
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -147,7 +151,6 @@ const ContactForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-
     setSending(true);
     emailjs
       .send(
@@ -176,7 +179,6 @@ const ContactForm = () => {
           onChange={handleChange}
         />
         {errors.name && <Message>{errors.name}</Message>}
-
         <Input
           type='email'
           name='email'
@@ -185,7 +187,6 @@ const ContactForm = () => {
           onChange={handleChange}
         />
         {errors.email && <Message>{errors.email}</Message>}
-
         <Input
           type='tel'
           name='phone'
@@ -195,7 +196,6 @@ const ContactForm = () => {
         />
         {errors.phone && <Message>{errors.phone}</Message>}
         {errors.contact && <Message>{errors.contact}</Message>}
-
         <Textarea
           name='message'
           placeholder='Your Message'
@@ -203,11 +203,9 @@ const ContactForm = () => {
           onChange={handleChange}
         />
         {errors.message && <Message>{errors.message}</Message>}
-
         <Button type='submit' disabled={sending}>
           {sending ? 'Sending...' : 'Send Message'}
         </Button>
-
         {formStatus === 'success' && (
           <Message success>Thank you! We’ll get back to you soon.</Message>
         )}

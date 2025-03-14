@@ -1,25 +1,33 @@
 import styled from 'styled-components';
 
 const HeaderStyled = styled.header`
-  background-color: ${({ theme }) => theme.secondaryColor};
-  color: white;
+  background: ${({ theme }) => theme.secondaryColor};
+  color: #fff;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background 0.3s ease;
 `;
 
 const Logo = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 2px;
 `;
 
 const Nav = styled.nav`
   a {
-    color: white;
+    color: #fff;
     margin-left: 1.5rem;
-    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
     &:hover {
+      color: ${({ theme }) => theme.primaryColor};
       text-decoration: underline;
     }
   }

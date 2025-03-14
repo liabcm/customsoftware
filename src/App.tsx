@@ -12,7 +12,7 @@ const defaultTheme = {
   primaryColor: '#3498db',
   secondaryColor: '#2c3e50',
   backgroundColor: '#f5f5f5',
-  cardBackground: '#ecf0f1',
+  cardBackground: '#ffffff',
   textColor: '#333',
   fontFamily: "'Roboto', sans-serif",
 };
@@ -22,6 +22,7 @@ const AppContainer = styled.div`
   color: ${({ theme }) => theme.textColor};
   min-height: 100vh;
   width: 100vw;
+  overflow-x: hidden;
 `;
 
 const App = () => {
