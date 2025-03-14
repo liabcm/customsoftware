@@ -29,7 +29,7 @@ const Input = styled.input`
   font-size: 1rem;
   background-color: ${({ theme }) => theme.backgroundColor};
   color: ${({ theme }) => theme.textColor};
-  min-width: 30rem;
+  min-width: 50%;
   margin: 0 auto;
   display: block;
 `;
@@ -42,7 +42,7 @@ const Textarea = styled.textarea`
   min-height: 100px;
   background-color: ${({ theme }) => theme.backgroundColor};
   color: ${({ theme }) => theme.textColor};
-  min-width: 30rem;
+  min-width: 50%;
   margin: 0 auto;
   display: block;
 `;
@@ -59,7 +59,7 @@ const Button = styled.button<{ disabled?: boolean }>`
     background-color: ${({ theme }) => theme.primaryColor};
     filter: brightness(90%);
   }
-  min-width: 30rem;
+  min-width: 50%;
   margin: 0 auto;
   display: block;
 `;
